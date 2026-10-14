@@ -1,3 +1,6 @@
+// API 키
+const API_KEY = 'sajuapi_free_n0aKA15ygK2CM9pTflXyTEqIy3agLgi';
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('sajuForm');
     const resultSection = document.getElementById('resultSection');
@@ -9,13 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // API 키 확인
-        const apiKey = prompt('Saju API 키를 입력해주세요.\n(무료 키 발급: https://saju-api.pages.dev/)');
-        if (!apiKey) {
-            alert('API 키가 필요합니다.');
-            return;
-        }
-
         // 입력값 가져오기
         const name = document.getElementById('name').value;
         const birthdate = document.getElementById('birthdate').value;
@@ -36,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch('https://saju-api.pages.dev/api/v1/calculate', {
                 method: 'POST',
                 headers: {
-                    'X-API-Key': apiKey,
+                    'X-API-Key': API_KEY,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
@@ -89,6 +85,12 @@ function updateResult(data, name, birthdate, gender, mbti) {
     const elements = data.elements;
     const dayMaster = data.day_master;
     const zodiac = data.zodiac;
+
+    // 사주명식 업데이트
+    updateSajuTable(pillars);
+
+    // 오행 그래프 업데이트
+    updateElementsChart(elements);
 
     // 성격 분석 (일주 + 오행 + MBTI 기반)
     const personalityText = generatePersonality(dayMaster, elements, mbti, pillars);
@@ -326,4 +328,40 @@ function getDayMasterMoneyAdvice(dayMaster) {
     
     const key = `${dayMaster.polarity}_${dayMaster.element}`;
     return dayMasterMoney[key] || '균형 잡힌 금전운을 가지고 있습니다.';
+}
+
+function updateSajuTable(pillars) {
+    const sajuPillars = document.querySelectorAll('.saju-pillar');
+    
+    // 연주
+    sajuPillars[0].querySelector('.pillar-stem').textContent = pillars.year.stem_hanja;
+    sajuPillars[0].querySelector('.pillar-branch').textContent = pillars.year.branch_hanja;
+    
+    // 월주
+    sajuPillars[1].querySelector('.pillar-stem').textContent = pillars.month.stem_hanja;
+    sajuPillars[1].querySelector('.pillar-branch').textContent = pillars.month.branch_hanja;
+    
+    // 일주
+    sajuPillars[2].querySelector('.pillar-stem').textContent = pillars.day.stem_hanja;
+    sajuPillars[2].querySelector('.pillar-branch').textContent = pillars.day.branch_hanja;
+    
+    // 시주
+    sajuPillars[3].querySelector('.pillar-stem').textContent = pillars.hour.stem_hanja;
+    sajuPillars[3].querySelector('.pillar-branch').textContent = pillars.hour.branch_hanja;
+}
+
+function updateElementsChart(elements) {
+    const total = Object.values(elements).reduce((sum, val) => sum + val, 0);
+    const elementBars = document.querySelectorAll('.element-bar');
+    
+    const elementOrder = ['wood', 'fire', 'earth', 'metal', 'water'];
+    
+    elementOrder.forEach((element, index) => {
+        const percentage = total > 0 ? Math.round((elements[element] / total) * 100) : 0;
+        const barFill = elementBars[index].querySelector('.bar-fill');
+        const barValue = elementBars[index].querySelector('.bar-value');
+        
+        barFill.style.width = `${percentage}%`;
+        barValue.textContent = `${percentage}%`;
+    });
 }

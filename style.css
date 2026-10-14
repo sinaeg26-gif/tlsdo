@@ -126,6 +126,99 @@ header p {
     white-space: pre-line;
 }
 
+/* 사주명식 그리드 */
+.saju-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.saju-pillar {
+    text-align: center;
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.pillar-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.pillar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pillar-stem,
+.pillar-branch {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.pillar-branch {
+    color: #764ba2;
+}
+
+/* 오행 그래프 */
+.elements-graph {
+    margin-top: 20px;
+}
+
+.element-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.bar-label {
+    width: 40px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+.bar-fill {
+    flex: 0 0 auto;
+    height: 25px;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: width 0.5s ease;
+    min-width: 0;
+}
+
+.element-bar[data-element="wood"] .bar-fill {
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+}
+
+.element-bar[data-element="fire"] .bar-fill {
+    background: linear-gradient(90deg, #F44336, #FF5722);
+}
+
+.element-bar[data-element="earth"] .bar-fill {
+    background: linear-gradient(90deg, #795548, #A1887F);
+}
+
+.element-bar[data-element="metal"] .bar-fill {
+    background: linear-gradient(90deg, #607D8B, #90A4AE);
+}
+
+.element-bar[data-element="water"] .bar-fill {
+    background: linear-gradient(90deg, #2196F3, #03A9F4);
+}
+
+.bar-value {
+    width: 50px;
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+}
+
 .personality-icon,
 .love-icon,
 .money-icon {
