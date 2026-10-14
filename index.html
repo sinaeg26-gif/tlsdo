@@ -6,6 +6,7 @@
     <meta name="robots" content="noindex">
     <title>나의 사주</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -159,11 +160,191 @@
 
             <div class="action-buttons">
                 <button class="save-btn">결과 저장하기</button>
-                <button class="share-btn">결과 공유하기</button>
+                <button class="share-btn" id="shareBtn">결과 공유하기</button>
+                <button class="love-btn" id="showLoveAnalysis">연애운 분석하기</button>
+            </div>
+
+            <!-- 공유용 카드 -->
+            <div class="share-card" id="shareCard">
+                <div class="share-card-header">
+                    <h2>🪪 나의 사주 분석 결과</h2>
+                </div>
+                <div class="share-card-content">
+                    <div class="share-basic-info">
+                        <p><strong>이름:</strong> <span id="shareName"></span></p>
+                        <p><strong>생년월일:</strong> <span id="shareBirthdate"></span></p>
+                        <p><strong>MBTI:</strong> <span id="shareMbti"></span></p>
+                    </div>
+                    
+                    <div class="share-saju-table">
+                        <h3>📊 사주명식</h3>
+                        <div class="saju-grid">
+                            <div class="saju-pillar">
+                                <div class="pillar-title">연주</div>
+                                <div class="pillar-content">
+                                    <span class="pillar-stem" id="shareYearStem"></span>
+                                    <span class="pillar-branch" id="shareYearBranch"></span>
+                                </div>
+                            </div>
+                            <div class="saju-pillar">
+                                <div class="pillar-title">월주</div>
+                                <div class="pillar-content">
+                                    <span class="pillar-stem" id="shareMonthStem"></span>
+                                    <span class="pillar-branch" id="shareMonthBranch"></span>
+                                </div>
+                            </div>
+                            <div class="saju-pillar">
+                                <div class="pillar-title">일주</div>
+                                <div class="pillar-content">
+                                    <span class="pillar-stem" id="shareDayStem"></span>
+                                    <span class="pillar-branch" id="shareDayBranch"></span>
+                                </div>
+                            </div>
+                            <div class="saju-pillar">
+                                <div class="pillar-title">시주</div>
+                                <div class="pillar-content">
+                                    <span class="pillar-stem" id="shareHourStem"></span>
+                                    <span class="pillar-branch" id="shareHourBranch"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="share-result-section">
+                        <h3>🧠 성격 분석</h3>
+                        <p id="sharePersonality"></p>
+                    </div>
+
+                    <div class="share-result-section">
+                        <h3>🌸 연애운</h3>
+                        <p id="shareLove"></p>
+                    </div>
+
+                    <div class="share-result-section">
+                        <h3>🪙 금전운</h3>
+                        <p id="shareMoney"></p>
+                    </div>
+
+                    <div class="share-footer">
+                        <p>나의 사주 - 사주 & MBTI 통합 운세 분석</p>
+                        <button class="download-btn" onclick="downloadShareImage()">이미지 다운로드</button>
+                        <button class="close-btn" onclick="closeShareCard()">닫기</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="love-analysis-section" id="loveAnalysisSection">
+                <h2>💕 연애취향 분석</h2>
+                <p class="love-hint">10개의 질문에 답하면 맞춤형 연애운을 알려드립니다.</p>
+                
+                <form id="preferenceForm">
+                    <div class="question-group">
+                        <p class="question">1. 데이트 장소는 어디가 좋아?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q1" value="active" required> 야외 활동, 스포츠</label>
+                            <label><input type="radio" name="q1" value="quiet"> 조용한 카페, 도서관</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">2. 연락 빈도는 어떻게 돼?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q2" value="frequent" required> 매일 연락하고 싶어</label>
+                            <label><input type="radio" name="q2" value="moderate"> 가끔 연락해도 괜찮아</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">3. 선물은 어떤 스타일이 좋아?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q3" value="practical" required> 실용적인 물건</label>
+                            <label><input type="radio" name="q3" value="emotional"> 감정적인 의미가 중요해</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">4. 갈등 해결 방식은?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q4" value="direct" required> 직접 대화로 해결</label>
+                            <label><input type="radio" name="q4" value="indirect"> 시간을 두고 생각 후 해결</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">5. 이상적인 연애 기간은?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q5" value="long" required> 장기적인 관계</label>
+                            <label><input type="radio" name="q5" value="short"> 현재의 설렘 중시</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">6. 표현 방식은?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q6" value="expressive" required> 솔직하게 표현</label>
+                            <label><input type="radio" name="q6" value="reserved"> 신중하게 표현</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">7. 공유하고 싶은 활동은?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q7" value="social" required> 대화, 모임</label>
+                            <label><input type="radio" name="q7" value="hobby"> 취미, 관심사</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">8. 결정 방식은?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q8" value="leader" required> 주도적으로 결정</label>
+                            <label><input type="radio" name="q8" value="follower"> 상대방 의견 존중</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">9. 독립성 정도는?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q9" value="independent" required> 서로 독립적인 공간</label>
+                            <label><input type="radio" name="q9" value="together"> 많은 시간 함께하기</label>
+                        </div>
+                    </div>
+
+                    <div class="question-group">
+                        <p class="question">10. 로맨틱한 순간은?</p>
+                        <div class="options">
+                            <label><input type="radio" name="q10" value="action" required> 행동으로 표현</label>
+                            <label><input type="radio" name="q10" value="atmosphere"> 분위기로 표현</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">연애취향 분석하기</button>
+                </form>
+
+                <div class="love-result-section" id="loveResultSection">
+                    <div class="result-card">
+                        <h3>💖 나의 연애취향</h3>
+                        <div class="love-icon">💖</div>
+                        <p id="preferenceResult"></p>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>🌟 이상적인 상대 유형</h3>
+                        <p id="idealType"></p>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>💡 연애 조언</h3>
+                        <p id="loveAdvice"></p>
+                    </div>
+
+                    <button class="back-btn" id="hideLoveAnalysis">사주 결과로 돌아가기</button>
+                </div>
             </div>
         </section>
     </div>
 
     <script src="script.js"></script>
+    <div class="share-overlay" id="shareOverlay"></div>
 </body>
 </html>

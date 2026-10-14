@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (error) {
             console.error('API 호출 실패:', error);
-            alert('사주 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+            alert(`사주 분석 중 오류가 발생했습니다: ${error.message}. 다시 시도해주세요.`);
         }
     });
 
@@ -65,8 +65,121 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 공유 버튼 클릭
-    document.querySelector('.share-btn').addEventListener('click', function() {
-        alert('결과 공유 기능은 아직 구현 중입니다.');
+    document.getElementById('shareBtn').addEventListener('click', function() {
+        // 공유 카드에 데이터 채우기
+        updateShareCard();
+        
+        // 공유 카드와 오버레이 보여주기
+        document.getElementById('shareCard').classList.add('active');
+        document.getElementById('shareOverlay').classList.add('active');
+    });
+
+    // 오버레이 클릭 시 닫기
+    document.getElementById('shareOverlay').addEventListener('click', function() {
+        document.getElementById('shareCard').classList.remove('active');
+        document.getElementById('shareOverlay').classList.remove('active');
+    });
+
+    // 공유 카드 닫기 함수 추가
+    window.closeShareCard = function() {
+        document.getElementById('shareCard').classList.remove('active');
+        document.getElementById('shareOverlay').classList.remove('active');
+    };
+
+    // 이미지 다운로드 함수
+    window.downloadShareImage = function() {
+        const shareCard = document.getElementById('shareCard');
+        const shareCardContent = shareCard.querySelector('.share-card-content');
+        
+        // 카드의 현재 스타일 저장
+        const originalTransform = shareCard.style.transform;
+        const originalDisplay = shareCard.style.display;
+        const originalHeight = shareCard.style.height;
+        const originalOverflow = shareCard.style.overflow;
+        
+        // 캡처를 위해 스타일 수정
+        shareCard.style.transform = 'none';
+        shareCard.style.display = 'block';
+        shareCard.style.height = 'auto';
+        shareCard.style.overflow = 'visible';
+        
+        // 임시로 body에 추가하여 정확한 크기 측정
+        const originalParent = shareCard.parentNode;
+        document.body.appendChild(shareCard);
+        
+        html2canvas(shareCard, {
+            scale: 2, // 고화질
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            x: 0,
+            y: 0,
+            width: shareCard.offsetWidth,
+            height: shareCard.scrollHeight,
+            windowWidth: shareCard.offsetWidth,
+            windowHeight: shareCard.scrollHeight,
+            scrollX: 0,
+            scrollY: 0
+        }).then(function(canvas) {
+            // 원래 위치로 복원
+            originalParent.appendChild(shareCard);
+            
+            // 원래 스타일 복원
+            shareCard.style.transform = originalTransform;
+            shareCard.style.display = originalDisplay;
+            shareCard.style.height = originalHeight;
+            shareCard.style.overflow = originalOverflow;
+            
+            const link = document.createElement('a');
+            link.download = '나의_사주_결과.png';
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        }).catch(function(error) {
+            console.error('이미지 생성 실패:', error);
+            alert('이미지 생성 중 오류가 발생했습니다.');
+            
+            // 원래 위치로 복원
+            originalParent.appendChild(shareCard);
+            
+            // 원래 스타일 복원
+            shareCard.style.transform = originalTransform;
+            shareCard.style.display = originalDisplay;
+            shareCard.style.height = originalHeight;
+            shareCard.style.overflow = originalOverflow;
+        });
+    };
+
+    // 연애운 분석 버튼 클릭
+    document.getElementById('showLoveAnalysis').addEventListener('click', function() {
+        document.getElementById('loveAnalysisSection').classList.add('active');
+    });
+
+    // 연애운 숨기기 버튼 클릭
+    document.getElementById('hideLoveAnalysis').addEventListener('click', function() {
+        document.getElementById('loveAnalysisSection').classList.remove('active');
+    });
+
+    // 연애취향 폼 제출
+    document.getElementById('preferenceForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // 답변 수집
+        const answers = {};
+        for (let i = 1; i <= 10; i++) {
+            answers[`q${i}`] = document.querySelector(`input[name="q${i}"]:checked`).value;
+        }
+
+        // 연애취향 분석
+        const result = analyzePreference(answers);
+        
+        // 결과 업데이트
+        document.getElementById('preferenceResult').textContent = result.preference;
+        document.getElementById('idealType').textContent = result.idealType;
+        document.getElementById('loveAdvice').textContent = result.advice;
+        
+        // 결과 섹션 보여주기
+        document.getElementById('loveResultSection').classList.add('active');
     });
 });
 
@@ -328,6 +441,182 @@ function getDayMasterMoneyAdvice(dayMaster) {
     
     const key = `${dayMaster.polarity}_${dayMaster.element}`;
     return dayMasterMoney[key] || '균형 잡힌 금전운을 가지고 있습니다.';
+}
+
+function analyzePreference(answers) {
+    // 각 유형별 점수 계산
+    let activeScore = 0;
+    let quietScore = 0;
+    let expressiveScore = 0;
+    let reservedScore = 0;
+    let independentScore = 0;
+    let togetherScore = 0;
+
+    // 점수 계산
+    if (answers.q1 === 'active') activeScore++;
+    else quietScore++;
+
+    if (answers.q2 === 'frequent') togetherScore++;
+    else independentScore++;
+
+    if (answers.q3 === 'practical') reservedScore++;
+    else expressiveScore++;
+
+    if (answers.q4 === 'direct') expressiveScore++;
+    else reservedScore++;
+
+    if (answers.q5 === 'long') togetherScore++;
+    else activeScore++;
+
+    if (answers.q6 === 'expressive') expressiveScore++;
+    else reservedScore++;
+
+    if (answers.q7 === 'social') activeScore++;
+    else quietScore++;
+
+    if (answers.q8 === 'leader') activeScore++;
+    else quietScore++;
+
+    if (answers.q9 === 'independent') independentScore++;
+    else togetherScore++;
+
+    if (answers.q10 === 'action') activeScore++;
+    else expressiveScore++;
+
+    // 주요 유형 결정
+    const types = {
+        active: activeScore,
+        quiet: quietScore,
+        expressive: expressiveScore,
+        reserved: reservedScore,
+        independent: independentScore,
+        together: togetherScore
+    };
+
+    const dominantType = Object.keys(types).reduce((a, b) => types[a] > types[b] ? a : b);
+
+    // 유형별 결과
+    const results = {
+        active: {
+            preference: '활동적이고 열정적인 연애를 선호합니다. 새로운 경험과 모험을 함께하는 것을 즐기며, 관계에서 에너지를 얻습니다.',
+            idealType: '활동적이고 에너지가 넘치는 상대방. 함께 여행, 스포츠, 야외 활동을 즐길 수 있는 사람이 어울립니다.',
+            advice: '상대방의 속도를 존중하면서도 관계를 흥미롭게 유지하세요. 가끔은 조용한 시간도 필요하다는 것을 기억하세요.'
+        },
+        quiet: {
+            preference: '조용하고 차분한 연애를 선호합니다. 깊은 대화와 이해를 중요시하며, 안정적인 관계를 추구합니다.',
+            idealType: '신중하고 생각이 깊은 상대방. 조용한 카페에서의 대화나 책을 함께 읽는 것을 즐길 수 있는 사람이 어울립니다.',
+            advice: '너무 소극적이지 않도록 의사를 표현하세요. 상대방에게 관심을 보이는 작은 행동이 중요합니다.'
+        },
+        expressive: {
+            preference: '감정을 솔직하게 표현하는 연애를 선호합니다. 로맨틱한 표현과 애정 표현을 중요시합니다.',
+            idealType: '감정 표현에 솔직한 상대방. 함께 감정을 나누고 로맨틱한 순간을 즐길 수 있는 사람이 어울립니다.',
+            advice: '상대방의 감정 상태를 잘 읽으세요. 너무 과한 표현보다는 상대방이 편안해하는 수준을 찾아야 합니다.'
+        },
+        reserved: {
+            preference: '신중하고 계획적인 연애를 선호합니다. 안정적인 관계를 중요시하며, 시간을 두고 관계를 발전시킵니다.',
+            idealType: '신중하고 계획적인 상대방. 미래를 함께 계획할 수 있고 안정적인 관계를 지향하는 사람이 어울립니다.',
+            advice: '감정 표현에도 노력이 필요합니다. 계획만 세우지 말고 즉흥적인 면도 조금은 보여주세요.'
+        },
+        independent: {
+            preference: '독립적인 연애를 선호합니다. 서로의 공간을 존중하며 개인적인 성장도 중요시합니다.',
+            idealType: '독립적이고 자신의 삶이 있는 상대방. 서로의 시간을 존중하면서도 함께 성장할 수 있는 사람이 어울립니다.',
+            advice: '너무 멀어지지 않도록 관심을 표현하세요. 독립성과 함께함 사이의 균형을 찾아야 합니다.'
+        },
+        together: {
+            preference: '함께하는 시간을 중요시하는 연애를 선호합니다. 많은 시간을 함께 보내며 깊은 유대감을 형성합니다.',
+            idealType: '함께하는 것을 즐기는 상대방. 일상을 함께 공유하고 많은 시간을 보낼 수 있는 사람이 어울립니다.',
+            advice: '상대방에게도 독립적인 시간이 필요하다는 것을 이해하세요. 너무 밀착하면 오히려 관계가 힘들어질 수 있습니다.'
+        }
+    };
+
+    return results[dominantType];
+}
+
+// 전역 변수로 현재 결과 저장
+let currentResult = {
+    name: '',
+    birthdate: '',
+    gender: '',
+    mbti: '',
+    pillars: null,
+    elements: null,
+    dayMaster: null,
+    zodiac: null,
+    personality: '',
+    love: '',
+    money: ''
+};
+
+function updateResult(data, name, birthdate, gender, mbti) {
+    // 결과 저장
+    currentResult.name = name;
+    currentResult.birthdate = birthdate;
+    currentResult.gender = gender;
+    currentResult.mbti = mbti;
+    currentResult.pillars = data.pillars;
+    currentResult.elements = data.elements;
+    currentResult.dayMaster = data.day_master;
+    currentResult.zodiac = data.zodiac;
+
+    // 기본 정보 업데이트
+    const birthdateFormatted = new Date(birthdate).toLocaleDateString('ko-KR');
+    const genderText = gender === 'male' ? '남성' : '여성';
+    
+    document.querySelector('.result-card p:nth-child(2)').innerHTML = `<strong>이름:</strong> ${name}`;
+    document.querySelector('.result-card p:nth-child(3)').innerHTML = `<strong>생년월일:</strong> ${birthdateFormatted}`;
+    document.querySelector('.result-card p:nth-child(4)').innerHTML = `<strong>성별:</strong> ${genderText}`;
+    document.querySelector('.result-card p:nth-child(5)').innerHTML = `<strong>MBTI:</strong> ${mbti}`;
+
+    // 사주 정보 업데이트
+    const pillars = data.pillars;
+    const elements = data.elements;
+    const dayMaster = data.day_master;
+    const zodiac = data.zodiac;
+
+    // 사주명식 업데이트
+    updateSajuTable(pillars);
+
+    // 오행 그래프 업데이트
+    updateElementsChart(elements);
+
+    // 성격 분석 (일주 + 오행 + MBTI 기반)
+    const personalityText = generatePersonality(dayMaster, elements, mbti, pillars);
+    document.querySelector('.personality p').textContent = personalityText;
+    currentResult.personality = personalityText;
+
+    // 연애운 (오행 + 일주 + 띠 기반)
+    const loveText = generateLoveFortune(elements, dayMaster, zodiac);
+    document.querySelector('.love p').textContent = loveText;
+    currentResult.love = loveText;
+
+    // 금전운 (오행 + 일주 기반)
+    const moneyText = generateMoneyFortune(elements, dayMaster);
+    document.querySelector('.money p').textContent = moneyText;
+    currentResult.money = moneyText;
+}
+
+function updateShareCard() {
+    // 기본 정보
+    document.getElementById('shareName').textContent = currentResult.name;
+    document.getElementById('shareBirthdate').textContent = new Date(currentResult.birthdate).toLocaleDateString('ko-KR');
+    document.getElementById('shareMbti').textContent = currentResult.mbti;
+
+    // 사주명식
+    if (currentResult.pillars) {
+        document.getElementById('shareYearStem').textContent = currentResult.pillars.year.stem_hanja;
+        document.getElementById('shareYearBranch').textContent = currentResult.pillars.year.branch_hanja;
+        document.getElementById('shareMonthStem').textContent = currentResult.pillars.month.stem_hanja;
+        document.getElementById('shareMonthBranch').textContent = currentResult.pillars.month.branch_hanja;
+        document.getElementById('shareDayStem').textContent = currentResult.pillars.day.stem_hanja;
+        document.getElementById('shareDayBranch').textContent = currentResult.pillars.day.branch_hanja;
+        document.getElementById('shareHourStem').textContent = currentResult.pillars.hour.stem_hanja;
+        document.getElementById('shareHourBranch').textContent = currentResult.pillars.hour.branch_hanja;
+    }
+
+    // 분석 결과
+    document.getElementById('sharePersonality').textContent = currentResult.personality;
+    document.getElementById('shareLove').textContent = currentResult.love;
+    document.getElementById('shareMoney').textContent = currentResult.money;
 }
 
 function updateSajuTable(pillars) {
