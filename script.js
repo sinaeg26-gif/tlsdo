@@ -96,16 +96,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalDisplay = shareCard.style.display;
         const originalHeight = shareCard.style.height;
         const originalOverflow = shareCard.style.overflow;
+        const originalMaxHeight = shareCard.style.maxHeight;
         
         // 캡처를 위해 스타일 수정
         shareCard.style.transform = 'none';
         shareCard.style.display = 'block';
         shareCard.style.height = 'auto';
         shareCard.style.overflow = 'visible';
+        shareCard.style.maxHeight = 'none';
         
         // 임시로 body에 추가하여 정확한 크기 측정
         const originalParent = shareCard.parentNode;
         document.body.appendChild(shareCard);
+        
+        // 실제 크기 측정
+        const rect = shareCard.getBoundingClientRect();
+        const actualWidth = Math.max(rect.width, shareCard.offsetWidth);
+        const actualHeight = Math.max(rect.height, shareCard.scrollHeight);
         
         html2canvas(shareCard, {
             scale: 2, // 고화질
@@ -115,10 +122,10 @@ document.addEventListener('DOMContentLoaded', function() {
             logging: false,
             x: 0,
             y: 0,
-            width: shareCard.offsetWidth,
-            height: shareCard.scrollHeight,
-            windowWidth: shareCard.offsetWidth,
-            windowHeight: shareCard.scrollHeight,
+            width: actualWidth,
+            height: actualHeight,
+            windowWidth: actualWidth,
+            windowHeight: actualHeight,
             scrollX: 0,
             scrollY: 0
         }).then(function(canvas) {
@@ -130,6 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
             shareCard.style.display = originalDisplay;
             shareCard.style.height = originalHeight;
             shareCard.style.overflow = originalOverflow;
+            shareCard.style.maxHeight = originalMaxHeight;
             
             const link = document.createElement('a');
             link.download = '나의_사주_결과.png';
@@ -147,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
             shareCard.style.display = originalDisplay;
             shareCard.style.height = originalHeight;
             shareCard.style.overflow = originalOverflow;
+            shareCard.style.maxHeight = originalMaxHeight;
         });
     };
 
