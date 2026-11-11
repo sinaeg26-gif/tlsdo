@@ -59,11 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // 저장 버튼 클릭
-    document.querySelector('.save-btn').addEventListener('click', function() {
-        alert('결과 저장 기능은 아직 구현 중입니다.');
-    });
-
     // 공유 버튼 클릭
     document.getElementById('shareBtn').addEventListener('click', function() {
         // 공유 카드에 데이터 채우기
@@ -289,10 +284,19 @@ function generatePersonality(dayMaster, elements, mbti, pillars) {
     const trait = elementTraits[dayMaster.element] || elementTraits['earth'];
     const mbtiInsight = trait.mbti[mbti] || 'MBTI와 사주의 조화로 균형 잡힌 성격을 형성합니다.';
     
+    // 오행 한국어 변환
+    const elementNames = {
+        'wood': '목',
+        'fire': '화',
+        'earth': '토',
+        'metal': '금',
+        'water': '수'
+    };
+    
     // 오행 분석 추가
     const elementAnalysis = analyzeElements(elements);
     
-    return `${trait.base}을 가지고 있습니다. 일주가 ${dayMaster.stem}(${dayMaster.element})로서, ${trait.base}의 특성을 잘 보여줍니다.\n\n` +
+    return `${trait.base}을 가지고 있습니다. 일주가 ${dayMaster.stem}(${elementNames[dayMaster.element]})로서, ${trait.base}의 특성을 잘 보여줍니다.\n\n` +
            `강점: ${trait.strengths.join(', ')}\n` +
            `보완점: ${trait.weaknesses.join(', ')}\n\n` +
            `MBTI(${mbti})와 사주의 조화: ${mbtiInsight}\n\n` +

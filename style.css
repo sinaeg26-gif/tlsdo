@@ -322,12 +322,12 @@ header p {
     transform: translate(-50%, -50%);
     background: white;
     border-radius: 20px;
-    padding: 30px;
-    max-width: 640px;
+    padding: 20px;
+    max-width: 580px;
     width: 90%;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     z-index: 1000;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
 }
 
@@ -337,34 +337,34 @@ header p {
 
 .share-card-header {
     text-align: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
     border-bottom: 2px solid #f0f0f0;
 }
 
 .share-card-header h2 {
     color: #333;
-    font-size: 1.5em;
+    font-size: 1.3em;
     margin: 0;
 }
 
 .share-card-content {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 15px;
-    padding: 20px;
+    padding: 15px;
     color: white;
 }
 
 .share-basic-info {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin-bottom: 15px;
 }
 
 .share-basic-info p {
-    margin: 5px 0;
-    font-size: 0.9em;
+    margin: 4px 0;
+    font-size: 0.85em;
 }
 
 .share-basic-info strong {
@@ -374,33 +374,33 @@ header p {
 .share-saju-table {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin-bottom: 15px;
 }
 
 .share-saju-table h3 {
     color: #fff;
-    margin: 0 0 10px 0;
-    font-size: 1.1em;
+    margin: 0 0 8px 0;
+    font-size: 1em;
 }
 
 .share-result-section {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
+    padding: 12px;
+    margin-bottom: 12px;
 }
 
 .share-result-section h3 {
     color: #fff;
-    margin: 0 0 10px 0;
-    font-size: 1.1em;
+    margin: 0 0 8px 0;
+    font-size: 1em;
 }
 
 .share-result-section p {
     color: #fff;
-    font-size: 0.85em;
-    line-height: 1.5;
+    font-size: 0.8em;
+    line-height: 1.4;
     margin: 0;
     white-space: pre-line;
 }
